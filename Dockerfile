@@ -12,11 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ubuntu:trusty
+from phusion/baseimage:0.9.16
 
 maintainer Neo Fung <neosfung@gmail.com>
 
-run apt-get update
+ENV HOME /root
+RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
+CMD ["/sbin/my_init"]
+
+RUN apt-get update
 run apt-get install -y build-essential git
 run apt-get install -y python python-dev python-setuptools
 run apt-get install -y nginx supervisor
@@ -48,3 +52,5 @@ run django-admin.py startproject website /home/docker/code/app/
 
 expose 80
 cmd ["supervisord", "-n"]
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
